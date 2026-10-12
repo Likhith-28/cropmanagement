@@ -13,7 +13,7 @@ export default function MyEnquiries() {
 
   const fetchMyEnquiries = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/enquiries");
+      const res = await axios.get("http://localhost:5001/enquiries");
 
       console.log("Logged In User:", user);
       console.log("All Enquiries:", res.data);

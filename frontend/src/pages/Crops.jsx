@@ -24,7 +24,7 @@ export default function Crops() {
   const fetchCrops = async () => {
     try {
       const res = await axios.get(
-        "http://localhost:5000/crops",
+        "http://localhost:5001/crops",
         authHeader
       );
       setCrops(res.data);
@@ -47,14 +47,14 @@ export default function Crops() {
 
       if (editId) {
         await axios.put(
-          `http://localhost:5000/crops/${editId}`,
+          `http://localhost:5001/crops/${editId}`,
           payload,
           authHeader
         );
         setEditId(null);
       } else {
         await axios.post(
-          "http://localhost:5000/crops",
+          "http://localhost:5001/crops",
           payload,
           authHeader
         );
@@ -80,7 +80,7 @@ export default function Crops() {
   const deleteCrop = async (id) => {
     try {
       await axios.delete(
-        `http://localhost:5000/crops/${id}`,
+        `http://localhost:5001/crops/${id}`,
         authHeader
       );
 

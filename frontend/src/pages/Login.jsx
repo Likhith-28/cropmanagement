@@ -2,7 +2,6 @@ import { Link,useNavigate } from "react-router-dom";
 import "./login.css";
 import { useState } from "react";
 import axios from "axios";
-import Home from "./Home";
 export default function Login() {
  
   const[email,setEmail]=useState("");
@@ -16,7 +15,7 @@ export default function Login() {
         try {
             const response = await axios.post(
               
-                "http://localhost:5000/api/login",
+                "http://localhost:5001/api/login",
                 {
                     email,
                     password,
@@ -77,7 +76,7 @@ export default function Login() {
         <div className="container my-2">
         <div className="row ">
             <div className="col-md-7">
-          <input type="checkbox" required/>
+          <input type="checkbox" />
           <span>Remember me</span>
                 </div>
                 <div className="col-md-5">

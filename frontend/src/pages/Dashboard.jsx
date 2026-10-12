@@ -21,7 +21,7 @@ export default function Dashboard() {
   const fetchCrops = async () => {
     try {
       const res = await axios.get(
-        "http://localhost:5000/crops",
+        "http://localhost:5001/crops",
         authHeader
       );
 

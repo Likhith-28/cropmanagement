@@ -12,7 +12,7 @@ export default function AdminQueries() {
 
   const getEnquiries = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/enquiries");
+      const res = await axios.get("http://localhost:5001/enquiries");
       setEnquiries(res.data);
     } catch (err) {
       console.log(err);
@@ -21,7 +21,7 @@ export default function AdminQueries() {
 
   const submitReply = async (id) => {
     try {
-      await axios.put(`http://localhost:5000/enquiries/${id}/reply`, {
+      await axios.put(`http://localhost:5001/enquiries/${id}/reply`, {
         reply,
       });
 
@@ -39,7 +39,7 @@ export default function AdminQueries() {
   const deleteEnquiry = async (id) => {
     if (!window.confirm("Delete this enquiry?")) return;
 
-    await axios.delete(`http://localhost:5000/enquiries/${id}`);
+    await axios.delete(`http://localhost:5001/enquiries/${id}`);
 
     getEnquiries();
   };

@@ -31,14 +31,7 @@ const auth = (req, res, next) => {
   }
 };
 
-mongoose
-    .connect(process.env.MONGO_URI)
-    .then(() => {
-        console.log("MongoDB Cloud Connected Successfully");
-    })
-    .catch((error) => {
-        console.log("MongoDB Connection Failed", error);
-    });
+const mongoUri = process.env.MONGODB_URI || process.env.MONGO_URI;
 
 app.get("/", (req, res) => {
   res.send("Backend server is running");
@@ -46,15 +39,30 @@ app.get("/", (req, res) => {
 
 app.post("/api/register", async (req, res) => {
     try{
-      const { fullName, email, password, role } = req.body;
+      const { fullName, email, password } = req.body;
+
+      if (!fullName?.trim() || !email?.trim() || !password) {
+        return res.status(400).json({
+          message: "Name, email, and password are required",
+        });
+      }
+
+      const normalizedEmail = email.trim().toLowerCase();
+      const existingUser = await User.findOne({ email: normalizedEmail });
+      if (existingUser) {
+        return res.status(409).json({
+          message: "An account with this email already exists. Please log in instead.",
+        });
+      }
 
 const hashedPassword = await bcrypt.hash(password, 10);
 
 const newUser = new User({
-    fullName,
-    email,
+    fullName: fullName.trim(),
+    email: normalizedEmail,
     password: hashedPassword,
-    role,
+    // Public registration must never grant administrator access.
+    role: "user",
 });
 
 await newUser.save();
@@ -63,9 +71,15 @@ res.status(200).json({
     message: "Registration Successful",
 });
     }catch (error){
+        // A duplicate can still happen if two registration requests race.
+        if (error.code === 11000) {
+          return res.status(409).json({
+            message: "An account with this email already exists. Please log in instead.",
+          });
+        }
+        console.error("Registration error:", error);
         res.status(500).json({
             message: "Registration failed",
-            error: error.message
         });
     }
 });
@@ -75,14 +89,14 @@ app.post("/api/login", async (req, res) => {
     const { email, password } = req.body;
 
     // check required fields
-    if (!email || !password) {
+    if (!email?.trim() || !password) {
       return res.status(400).json({
         message: "Email and password are required",
       });
     }
 
     // find user
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email: email.trim().toLowerCase() });
 
     if (!user) {
       return res.status(400).json({
@@ -354,9 +368,27 @@ app.get("/enquiries/user/:email", async (req, res) => {
 });
 // =================== END ENQUIRY APIs ===================
 
-app.listen(process.env.PORT, ()=>{
-    console.log(`Server running on port ${process.env.PORT}`);
-})
+const startServer = async () => {
+  if (!mongoUri) {
+    console.error("MongoDB connection string is missing. Set MONGODB_URI in backend/.env.");
+    process.exit(1);
+  }
+
+  try {
+    await mongoose.connect(mongoUri);
+    console.log("MongoDB connected successfully");
+
+    const port = Number(process.env.PORT) || 5001;
+    app.listen(port, () => {
+      console.log(`Server running on port ${port}`);
+    });
+  } catch (error) {
+    console.error("MongoDB connection failed:", error.message);
+    process.exit(1);
+  }
+};
+
+startServer();
 
 
 

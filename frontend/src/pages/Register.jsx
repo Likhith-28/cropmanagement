@@ -6,7 +6,6 @@ import { Link } from "react-router-dom";
 export default function Register() {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
-  const [role, setRole] = useState("user");
   const [password, setPassword] = useState("");
   const [confirmpass, setConfirmPassword] = useState("");
 
@@ -22,12 +21,11 @@ export default function Register() {
       fullName,
       email,
       password,
-      role,
     };
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/register",
+        "http://localhost:5001/api/register",
         userData
       );
 
@@ -35,11 +33,13 @@ export default function Register() {
 
       setFullName("");
       setEmail("");
-      setRole("user");
       setPassword("");
       setConfirmPassword("");
     } catch (error) {
-      alert(error.response?.data?.message || "Registration Failed");
+      alert(
+        error.response?.data?.message ||
+          "Unable to reach the registration service. Please make sure the backend is running and try again."
+      );
     }
   };
 
@@ -82,21 +82,6 @@ export default function Register() {
                   onChange={(e) => setEmail(e.target.value)}
                   required
                 />
-
-                <br />
-
-                <label style={{ fontSize: "20px" }}>
-                  Select Role:
-                </label>
-
-                <select
-                  className="form-control"
-                  value={role}
-                  onChange={(e) => setRole(e.target.value)}
-                >
-                  <option value="user">User</option>
-                  <option value="admin">Admin</option>
-                </select>
 
                 <br />
 
