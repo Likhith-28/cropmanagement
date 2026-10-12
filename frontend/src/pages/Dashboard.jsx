@@ -47,12 +47,7 @@ export default function Dashboard() {
     try {
       setLoadingWeather(true);
 
-      const apiKey = import.meta.env.VITE_OPENWEATHER_API_KEY;
-      if (!apiKey) {
-        console.warn("Weather lookup is disabled: set VITE_OPENWEATHER_API_KEY in frontend/.env.local.");
-        setWeather(null);
-        return;
-      }
+      const apiKey = "c6b5e739aa6acd1ece34f3de8c504336";
 
       const response = await axios.get(
         "https://api.openweathermap.org/data/2.5/weather",
